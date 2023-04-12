@@ -288,7 +288,7 @@ class ReversePolishEntry {
               RegExp(r'^while М\d+ М\d+$').hasMatch(stack.last)) {
             final tag = RegExp(r'М\d+').allMatches(stack.last).toList();
             stack.removeLast();
-            result.add('${tag[0]} БП ${tag[1]} ) { ');
+            result.add('${tag[0].group(0)} БП ${tag[1].group(0)} ) { ');
             whileCount -= 1;
           }
         } else if (t[i] == ';') {
