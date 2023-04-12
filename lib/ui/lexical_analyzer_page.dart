@@ -5,6 +5,7 @@ import '../lexical_anallyzer/lexical_analyzer.dart';
 import '../lexical_anallyzer/models/lexical_analyzer_output.dart';
 import '../lexical_anallyzer/tokens/divider_tokens.dart';
 import '../lexical_anallyzer/tokens/token.dart';
+import '../reverse_polish_entry/reverse_polish_entry.dart';
 
 class LexicalAnalyzerPage extends ConsumerWidget {
   const LexicalAnalyzerPage({
@@ -27,7 +28,12 @@ class _LexicalAnalyzerPage extends ConsumerStatefulWidget {
 
 class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
   LexicalAnalyzerOutput? anOutput;
-  void f() {
+
+  final inputController = TextEditingController(text: kSample1JaveCode);
+  final lexemsController = TextEditingController();
+  final polishController = TextEditingController();
+
+  void generateTokens() {
     final an = LexicalAnalyzer();
 
     anOutput = an.execute(inputController.text);
@@ -42,13 +48,20 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
         )
         .join(" ");
 
-    outputController.text = output;
+    lexemsController.text = output;
 
     setState(() {});
   }
 
-  final inputController = TextEditingController(text: kSample1JaveCode);
-  final outputController = TextEditingController();
+  void generateReversePolishEntry() {
+    String inputText = inputController.text;
+
+    final output1 = LexicalAnalyzer().execute(inputText);
+
+    String output = ReversePolishEntry().execute(output1).convertToText();
+
+    polishController.text = output;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +92,10 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                 ),
               ),
               const SizedBox(width: 16),
-              ElevatedButton(onPressed: f, child: const Text('  --->  ')),
+              ElevatedButton(
+                onPressed: generateTokens,
+                child: const Text('  Lab1  '),
+              ),
               const SizedBox(width: 16),
               SizedBox(
                 width: 400,
@@ -93,7 +109,32 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        controller: outputController,
+                        controller: lexemsController,
+                        maxLines: 32,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: generateReversePolishEntry,
+                child: const Text('  Lab2  '),
+              ),
+              const SizedBox(width: 16),
+              SizedBox(
+                width: 400,
+                child: Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Обратная польская нотация',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: polishController,
                         maxLines: 32,
                       ),
                     ],

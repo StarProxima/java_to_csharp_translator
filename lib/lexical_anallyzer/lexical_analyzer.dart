@@ -93,7 +93,8 @@ class LexicalAnalyzer {
           handleDividers(char);
           break;
         case SemanticProcedure.p4:
-          handleString(str);
+          handleDividers(char);
+          handleString(str.substring(1));
           handleDividers(char);
           break;
         case SemanticProcedure.p5:
