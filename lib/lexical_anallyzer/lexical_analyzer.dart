@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'models/lexical_analyzer_output.dart';
+import 'state_machine/state_machine.dart';
 
 import '../core/logger.dart';
 import 'tokens/divider_tokens.dart';
@@ -8,58 +9,38 @@ import 'tokens/operation_tokens.dart';
 import 'tokens/token.dart';
 import 'tokens/value_tokens.dart';
 
-class LexicalAnalyzer {
-  String sampleCode = """
+enum SemanticProcedure {
+  p1,
+  p2,
+  p3,
+  p4,
+  p5,
+  p6,
+}
 
-		    double c = 3;
-        int b;
-        String f;
-        int a = 1;
-        int e3 = 2;
-        int chh = 0;
-        if (c > 2.79) {
-            b = a * e3;
-            f = "as ;ds";
-            chh += 1;
-        }
-        int count = 0;
-        while(true) {
-            count ++;
-            if (count == 12) {
-                break;
-            }
-        }
-
-""";
-
-  String sampleCode2 = """
-public class Main
-{
-	public static void main(String[] args) {
-		    double c = 3;
-        int b;
-        String f;
-        int a = 1;
-        int e3 = 2;
-        int chh = 0;
-        if (c > 2.79) {
-            b = a * e3;
-            f = "as ;ds";
-            chh += 1;
-        }
-        int count = 0;
-        while(true) {
-            count++;
-            if (count == 12) {
-                break;
-            }
-        }
-	}
+String kSample1JaveCode = """
+int c = 3;
+int b;
+String f;
+int a = 1;
+int e3 = 2;
+int chh = 0;
+if (c > 2.79) {
+    b = a * e3;
+    f = "as ;ds";
+    chh += 1;
+}
+int count = 0;
+while(true) {
+    count ++;
+    if (count == 12) {
+        break;
+    }
 }
 """;
 
+class LexicalAnalyzer {
   List<Token> outputTokens = [];
-
   List<IdentifierToken> identifiers = [];
   List<ValueToken> valuesNums = [];
   List<ValueToken> valuesBool = [];
@@ -71,106 +52,135 @@ public class Main
     }
   }
 
+  int currentIndex = 0;
+  String inputCode = '';
+
   void addAllTokens(List<Token?> tokens) => tokens.forEach(addToken);
 
-  List<Token> execute(String inputCode) {
+  LexicalAnalyzerOutput execute(String inputCode) {
     logger.log(Log.info, title: "Start Lexical Analyze", message: inputCode);
+
+    this.inputCode = inputCode;
+
+    StateMachine stateMachine = StateMachine(inputCode);
+
     final buffer = StringBuffer();
-    var isInString = false;
 
-    for (int i = 0; i < inputCode.characters.length; i++) {
-      var char = inputCode.characters.elementAt(i);
+    for (currentIndex = 0; currentIndex < inputCode.length; currentIndex++) {
+      var char = inputCode[currentIndex];
 
-      var divider = DividerTokens.check(char);
+      final (nextState, procedure) = stateMachine.execute(
+        currentIndex,
+        currentIndex == inputCode.length - 1,
+      );
 
-      if (divider != null) {
-        var str = buffer.toString();
+      final str = buffer.toString();
 
-        if (divider == DividerTokens.dot) {
-          if (i > 0 && i < inputCode.characters.length - 1) {
-            var prev = int.tryParse(inputCode.characters.elementAt(i - 1));
-            var next = int.tryParse(inputCode.characters.elementAt(i + 1));
-            if (prev != null && next != null) {
-              buffer.write(char);
-              continue;
-            }
-          }
-        }
+      final div = DividerTokens.check(char);
 
-        if (divider == DividerTokens.quotes) {
-          if (isInString) {
-            handleString(str, divider);
-            isInString = false;
-            buffer.clear();
-            continue;
-          } else {
-            isInString = true;
-          }
-        }
+      switch (procedure) {
+        case SemanticProcedure.p1:
+          handleKeyWordsAndOperations(str);
+          if (div == null) currentIndex--;
+          handleDividers(char);
+          break;
+        case SemanticProcedure.p2:
+          handleIdentifiers(str);
+          handleDividers(char);
+          break;
+        case SemanticProcedure.p3:
+          handleNumbers(str);
+          handleDividers(char);
+          break;
+        case SemanticProcedure.p4:
+          handleString(str);
+          handleDividers(char);
+          break;
+        case SemanticProcedure.p5:
+          handleOperations(char);
+          handleDividers(char);
+          break;
+        case SemanticProcedure.p6:
+          handleDividers(str);
+          handleDividers(char);
+          break;
+        default:
+          break;
+      }
 
-        if (isInString) {
-          buffer.write(char);
-        } else {
-          if (buffer.isNotEmpty) {
-            if (!handleKeyWords(str, divider)) {
-              if (!handleOperations(str, divider)) {
-                if (!handleValues(str, divider)) {
-                  if (!handleIdentifiers(str, divider)) {
-                    logger.log(
-                      Log.warning,
-                      title: "Failed to process text",
-                      message: str,
-                    );
-                  }
-                }
-              }
-            }
-          }
+      if (nextState is S) buffer.clear();
 
-          addToken(divider);
-          buffer.clear();
-        }
+      if (nextState is! S) buffer.write(char);
+
+      // addToken(div);
+
+      // if ([
+      //   DividerTokens.whitespace,
+      //   DividerTokens.newLine,
+      //   DividerTokens.newLineWindows,
+      // ].contains(div)) {
+      //   addToken(div);
+      // }
+    }
+
+    final output = LexicalAnalyzerOutput(
+      tokens: outputTokens,
+      keyWords: outputTokens.toSet().whereType<KeyWordTokens>().toList(),
+      identifiers: identifiers,
+      numberValues: valuesNums,
+      stringValues: valuesString,
+      boolValues: valuesBool,
+      operations: outputTokens.toSet().whereType<OperationTokens>().toList(),
+      dividers: outputTokens.toSet().whereType<DividerTokens>().toList(),
+    );
+
+    return output;
+  }
+
+  void handleKeyWordsAndOperations(String str) {
+    // str = str.trim();
+    Token? token = KeyWordTokens.check(str);
+    if (token != null) {
+      addToken(token);
+    } else {
+      token = OperationTokens.check(str);
+      if (token != null) {
+        handleOperations(str);
       } else {
-        buffer.write(char);
+        handleIdentifiers(str);
       }
     }
-
-    return outputTokens;
   }
 
-  bool handleKeyWords(String str, DividerTokens divider) {
-    KeyWordTokens? token = KeyWordTokens.check(str);
-    if (token != null) {
-      addToken(token);
-    }
-    return token != null;
-  }
-
-  bool handleOperations(String str, DividerTokens divider) {
-    OperationTokens? token = OperationTokens.check(str);
-    if (token != null) {
-      addToken(token);
-    }
-    return token != null;
-  }
-
-  bool handleIdentifiers(String str, DividerTokens divider) {
+  void handleIdentifiers(String str) {
+    // if (DividerTokens.check(str) != null || str.isEmpty) return;
     IdentifierToken? token;
-    bool notStartWithNum = int.tryParse(str[0]) == null;
-    bool notContainsSpecialSymbols = !str.trim().contains(RegExp(r"\W"));
-    if (str.isNotEmpty && notStartWithNum && notContainsSpecialSymbols) {
-      token = IdentifierToken(identifiers.length, str);
+
+    bool? b = bool.tryParse(str);
+    if (b != null) {
+      var token = ValueToken(valuesBool.length, ValueTypeTokens.bool, str);
+      valuesBool.add(token);
+      addToken(token);
+      return;
     }
 
-    if (token != null) {
-      addToken(token);
+    for (final identifier in identifiers) {
+      if (identifier.value == str) token = identifier;
+    }
+
+    if (token == null) {
+      var count = str.length;
+      token = IdentifierToken(identifiers.length, str);
       identifiers.add(token);
     }
-    return token != null;
+
+    addToken(token);
   }
 
-  bool handleValues(String str, DividerTokens divider) {
+  void handleNumbers(String str) {
+    str = str.replaceAll(' ', '');
     ValueToken? token;
+
     if (num.tryParse(str) != null) {
       if (int.tryParse(str) != null) {
         token = ValueToken(valuesNums.length, ValueTypeTokens.int, str);
@@ -178,20 +188,29 @@ public class Main
         token = ValueToken(valuesNums.length, ValueTypeTokens.double, str);
       }
       valuesNums.add(token);
-    } else if (str == "true" || str == "false") {
-      token = ValueToken(valuesBool.length, ValueTypeTokens.bool, str);
-      valuesBool.add(token);
-    }
-    if (token != null) {
       addToken(token);
+    } else {
+      // throw Exception("handleNumbers error");
     }
-    return token != null;
   }
 
-  void handleString(String str, DividerTokens divider) {
-    ValueToken token =
-        ValueToken(valuesString.length, ValueTypeTokens.string, str);
-    addToken(token);
+  void handleString(String str) {
+    final token = ValueToken(valuesString.length, ValueTypeTokens.string, str);
     valuesString.add(token);
+    addToken(token);
+  }
+
+  void handleOperations(String str) {
+    var token = OperationTokens.check(str + inputCode[currentIndex + 1]);
+    if (token != null) {
+      currentIndex++;
+    }
+    token ??= OperationTokens.check(str);
+    addToken(token);
+  }
+
+  void handleDividers(String str) {
+    final token = DividerTokens.check(str);
+    addToken(token);
   }
 }

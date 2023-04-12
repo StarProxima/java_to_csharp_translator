@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0-233.0.dev <4.0.0'
+  sdk: '>=3.0.0-348.0.dev <4.0.0'
 
 
 dependencies:
@@ -16,6 +16,7 @@ dependencies:
   flutter_riverpod: ^2.2.0
   proxima_logger: ^0.6.3
   cupertino_icons: ^1.0.2
+  
 
 dev_dependencies:
   flutter_test:

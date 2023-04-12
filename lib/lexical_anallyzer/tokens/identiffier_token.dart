@@ -1,14 +1,15 @@
 import 'token.dart';
 
-class IdentifierToken implements Token {
+class IdentifierToken implements Token, ValToken {
   final int id;
 
+  @override
   final dynamic value;
 
   @override
-  final String mark = "I";
+  final String lexeme = "I";
   IdentifierToken(this.id, this.value);
 
   @override
-  String encode() => "${mark}_$id";
+  String encode() => "${lexeme}_$id";
 }

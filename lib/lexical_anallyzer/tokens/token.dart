@@ -1,9 +1,13 @@
 import '../../core/extensions.dart';
 
 abstract class Token {
-  abstract final String mark;
+  abstract final String lexeme;
 
   String encode();
+}
+
+abstract class ValToken implements Token {
+  dynamic get value;
 }
 
 enum Tokens implements Token {
@@ -15,13 +19,13 @@ enum Tokens implements Token {
   stringConstant("S");
 
   @override
-  final String mark;
-  const Tokens(this.mark);
+  final String lexeme;
+  const Tokens(this.lexeme);
 
   static Tokens? check(String str) {
-    return Tokens.values.where((e) => e.mark == str).firstOrNull;
+    return Tokens.values.where((e) => e.lexeme == str).firstOrNull;
   }
 
   @override
-  String encode() => "${mark}_$index";
+  String encode() => "${lexeme}_$index";
 }
