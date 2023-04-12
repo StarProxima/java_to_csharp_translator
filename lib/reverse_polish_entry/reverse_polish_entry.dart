@@ -171,11 +171,11 @@ class ReversePolishEntry {
           stack.removeLast();
           tagCount += 1;
           stack.add('if М$tagCount');
-          result.add('М$tagCount БП М${tagCount - 1} ) { ');
+          result.add('М$tagCount БП М${tagCount - 1} ');
         } else if (t[i] == 'while') {
           tagCount += 1;
           stack.add('${t[i]} М$tagCount');
-          result.add('М$tagCount ) { ');
+          result.add('М$tagCount ');
           whileCount += 1;
           bracketCount = 0;
           isWhile = true;
@@ -280,7 +280,7 @@ class ReversePolishEntry {
             }
             if (j >= t.length || t[j] != 'else') {
               stack.removeLast();
-              result.add('$tag ) { ');
+              result.add('$tag ');
               ifCount -= 1;
             }
           }
@@ -288,7 +288,7 @@ class ReversePolishEntry {
               RegExp(r'^while М\d+ М\d+$').hasMatch(stack.last)) {
             final tag = RegExp(r'М\d+').allMatches(stack.last).toList();
             stack.removeLast();
-            result.add('${tag[0].group(0)} БП ${tag[1].group(0)} ) { ');
+            result.add('${tag[0].group(0)} БП ${tag[1].group(0)} ');
             whileCount -= 1;
           }
         } else if (t[i] == ';') {
@@ -324,7 +324,7 @@ class ReversePolishEntry {
               if (t[j] != 'else') {
                 stack.removeLast();
               }
-              result.add('$tag ) { ');
+              result.add('$tag ');
               ifCount -= 1;
             }
             if (whileCount > 0 &&
@@ -332,7 +332,7 @@ class ReversePolishEntry {
               final tag = RegExp(r'М\d+').allMatches(stack.last);
               String tag1 = tag.first.group(0)!;
               String tag2 = tag.skip(1).first.group(0)!;
-              result.add('$tag1 БП $tag2 ) { ');
+              result.add('$tag1 БП $tag2 ');
               whileCount -= 1;
             }
           } else {
