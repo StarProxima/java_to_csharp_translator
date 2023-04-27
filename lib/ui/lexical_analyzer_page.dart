@@ -86,6 +86,7 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                       TextField(
                         controller: inputController,
                         maxLines: 32,
+                        readOnly: true,
                       ),
                     ],
                   ),
@@ -111,6 +112,7 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                       TextField(
                         controller: lexemsController,
                         maxLines: 32,
+                        readOnly: true,
                       ),
                     ],
                   ),
@@ -136,6 +138,7 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                       TextField(
                         controller: polishController,
                         maxLines: 32,
+                        readOnly: true,
                       ),
                     ],
                   ),
@@ -218,6 +221,7 @@ class TokensTextField extends ConsumerWidget {
               TextField(
                 controller: TextEditingController(text: map),
                 maxLines: 32,
+                readOnly: true,
               ),
             ],
           ),
