@@ -19,23 +19,35 @@ enum SemanticProcedure {
 }
 
 String kSample1JaveCode = """
-int c = 3;
-int b;
-String f;
-int a = 1;
-int e3 = 2;
-int chh = 0;
-if (c > 2.79) {
-    b = a * e3;
-    f = "as ;ds";
-    chh += 1;
+
+int sum(int a, int b) {
+  return a+b;
 }
-int count = 0;
-while(true) {
-    count ++;
-    if (count == 12) {
-        break;
-    }
+
+public static void main(String[] args) {
+  int c = 3;
+  int b;
+  String f;
+  int a = 1;
+  int e3 = 2;
+  int chh = sum(a, e3);
+
+  int[] array = new int[11];
+
+  if (c > 2.79) {
+      b = a * e3;
+      f = "as ;ds";
+      chh += 1;
+  }
+
+  int count = 0;
+
+  while(true) {
+      count ++;
+      if (count == 12) {
+          break;
+      }
+  }
 }
 """;
 
@@ -93,7 +105,8 @@ class LexicalAnalyzer {
           handleDividers(char);
           break;
         case SemanticProcedure.p4:
-          handleString(str);
+          handleDividers(char);
+          handleString(str.substring(1));
           handleDividers(char);
           break;
         case SemanticProcedure.p5:
