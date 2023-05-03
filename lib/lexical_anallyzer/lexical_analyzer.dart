@@ -19,36 +19,35 @@ enum SemanticProcedure {
 }
 
 String kSample1JaveCode = """
-
-int sum(int a, int b) {
-  return a+b;
-}
-
-public static void main(String[] args) {
-  int c = 3;
-  int b;
-  String f;
-  int a = 1;
-  int e3 = 2;
-  int chh = sum(a, e3);
-
-  int[] array = new int[11];
-
-  if (c > 2.79) {
-      b = a * e3;
-      f = "as ;ds";
-      chh += 1;
-  }
-
-  int count = 0;
-
-  while(true) {
-      count ++;
-      if (count == 12) {
-          break;
+	static void Main(string[] args)
+	{
+    int x;
+    int n;
+    int d;
+    x = 453;
+    d = 0;
+    while (x > 0)
+    {
+      d=x % 10;
+      if ((n == 3) || (n > 5))
+      {
+        n += d;
       }
+      x=x/10;
+    }
+    double Func(double a)
+      {
+            return a * a * 4;
+      }
+
+    double funcNumber;
+    double funcNumber = Func(6);
   }
-}
+     
+	static bool IsEven(int n)
+    {
+        return n % 2 == 0;
+    }
 """;
 
 class LexicalAnalyzer {
