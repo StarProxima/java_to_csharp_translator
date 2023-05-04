@@ -19,35 +19,44 @@ enum SemanticProcedure {
 }
 
 String kSample1JaveCode = """
-	static void Main(String[] args)
-	{
-    int x;
-    int n;
-    int d;
-    x = 453;
-    d = 0;
-    while (x > 0)
-    {
-      d=x % 10;
-      if ((n == 3) || (n > 5))
-      {
-        n += d;
-      }
-      x=x/10;
-    }
-    double Func(double a)
-      {
-            return a * a * 4;
-      }
+public static void Main(String[] args)
+{
+  int x;
+  int n;
+  int d;
+  x = 453;
+  d = 0;
+  n = 0;
 
-    double funcNumber;
-    double funcNumber = Func(6);
-  }
-     
-	static bool IsEven(int n)
+  String str = " ad;";
+
+  System.out.println(str);
+
+  while (x > 0)
+  {
+    d=x % 10;
+    if ((n == 3) || (n > 5))
     {
-        return n % 2 == 0;
+      n += d;
     }
+    x=x/10;
+  }
+
+  boolean isEven = IsEven(n);
+
+  double Func(double a)
+  {
+        return a * a * 4;
+  }
+
+  double funcNumber;
+  double funcNumber = Func(6);
+}
+    
+static bool IsEven(int n)
+{
+    return n % 2 == 0;
+}
 """;
 
 class LexicalAnalyzer {

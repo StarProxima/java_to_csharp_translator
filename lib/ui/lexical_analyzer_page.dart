@@ -33,6 +33,14 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
   final lexemsController = TextEditingController();
   final polishController = TextEditingController();
 
+  String internal(String inputText) {
+    inputText = inputText.replaceAll('System.out.println', 'Console.WriteLine');
+    inputText = inputText.replaceAll('boolean', 'bool');
+    inputText = inputText.replaceAll('String', 'string');
+
+    return inputText;
+  }
+
   void generateTokens() {
     final an = LexicalAnalyzer();
 
@@ -63,6 +71,24 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
     polishController.text = output;
   }
 
+  void lab3() {
+    String inputText = inputController.text;
+
+    inputText = inputText.split('\n').map((e) => '  $e').join('\n');
+
+    inputText = 'using System; \n\nclass Program { \n$inputText';
+
+    inputText = internal(inputText);
+
+    inputText = '$inputText\n}';
+
+    // final output1 = LexicalAnalyzer().execute(inputText);
+
+    // String output = ReversePolishEntry().execute(output1).convertToText();
+    // String output = kReversePolishEntry;
+    polishController.text = inputText;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -79,7 +105,7 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Код',
+                        'Код на Java',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 8),
@@ -120,8 +146,8 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
               ),
               const SizedBox(width: 16),
               ElevatedButton(
-                onPressed: generateReversePolishEntry,
-                child: const Text('  Lab2  '),
+                onPressed: lab3,
+                child: const Text('  Lab3  '),
               ),
               const SizedBox(width: 16),
               SizedBox(
@@ -131,7 +157,7 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Обратная польская нотация',
+                        'Выходной код на C#',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 8),

@@ -45,8 +45,6 @@ class AnotherLanguageGenerator {
       ...lexicalInput.stringValues.map((e) => '"${e.value}"')
     ];
 
-    rezult.add('from goto import with_goto');
-
     for (int i = 0; i < polishInput.result.length; i++) {
       int nowTabLevel = tabLevel;
       String token = polishInput.result[i];
@@ -111,7 +109,7 @@ class AnotherLanguageGenerator {
         } else if (token == 'in') {
           String tmp = stack.removeLast();
           rezult.removeLast();
-          rezult.add('for ${stack.removeLast()} in range($tmp):');
+          rezult.add('for ${stack.removeLast()} ($tmp):');
           i++;
           String endMark = polishInput.result[i].substring(0, 2);
           forsMark.add(endMark);
