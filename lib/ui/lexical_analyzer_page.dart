@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../lexical_anallyzer/lexical_analyzer.dart';
 import '../lexical_anallyzer/models/lexical_analyzer_output.dart';
+import '../lexical_anallyzer/state_machine/state_machine.dart';
 import '../lexical_anallyzer/tokens/divider_tokens.dart';
 import '../lexical_anallyzer/tokens/token.dart';
-import '../reverse_polish_entry/reverse_polish_entry.dart';
 
 class LexicalAnalyzerPage extends ConsumerWidget {
   const LexicalAnalyzerPage({
@@ -58,8 +58,8 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
 
     final output1 = LexicalAnalyzer().execute(inputText);
 
-    String output = ReversePolishEntry().execute(output1).convertToText();
-
+    // String output = ReversePolishEntry().execute(output1).convertToText();
+    String output = kReversePolishEntry;
     polishController.text = output;
   }
 
@@ -79,7 +79,7 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Enter Java code',
+                        'Код',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 8),
@@ -105,7 +105,7 @@ class _LexicalAnalyzerPageState extends ConsumerState<_LexicalAnalyzerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Output Tokens',
+                        'Лексемы',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 8),
