@@ -19,7 +19,7 @@ enum SemanticProcedure {
 }
 
 String kSample1JaveCode = """
-	static void Main(string[] args)
+	static void Main(String[] args)
 	{
     int x;
     int n;
